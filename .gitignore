@@ -1,0 +1,14 @@
+node_modules/
+dist/
+web/dist/
+*.log
+.env
+.env.local
+.DS_Store
+coverage/
+validate.json
+fund.json
+rpc.json
+logs.json
+logs2.json
+q.json
