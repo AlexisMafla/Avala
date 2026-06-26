@@ -10,6 +10,7 @@ import { SUPPORTED_COUNTRIES } from "../core/index.js";
 import { MCP_HTTP_PATH, registerMcpHttpRoute } from "../mcp/http.js";
 import { TOOLS, getTool } from "../tools/definitions.js";
 import { loadPaymentConfig, buildPaymentDiscovery, buildPaymentStatus, registerRestPaymentGating } from "./payments.js";
+import { buildMppManifest } from "./manifest.js";
 
 loadDotEnv();
 
@@ -88,6 +89,11 @@ app.get("/services.json", (c) =>
   }),
 );
 
+// MPP discovery manifest (OpenAPI 3.1) — auto-imported by agent payment registries.
+app.get("/.well-known/mpp.json", (c) =>
+  c.json(buildMppManifest(paymentConfig, new URL(c.req.url).origin)),
+);
+
 // --- Payment gating (tempo-tip20) ---
 
 registerRestPaymentGating(app, paymentConfig);
@@ -138,6 +144,7 @@ if (HAS_WEB) {
     if (
       pathname.startsWith("/v1") ||
       pathname.startsWith("/mcp") ||
+      pathname.startsWith("/.well-known/") ||
       pathname === "/healthz" ||
       pathname === "/payments/status" ||
       pathname === "/services.json"

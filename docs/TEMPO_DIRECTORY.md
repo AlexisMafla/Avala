@@ -42,6 +42,7 @@ Copia esta plantilla con tu URL real:
 | **Descripción** | Validación fiscal y bancaria por uso (ES, CO, AR) |
 | **URL API** | `https://TU-URL.up.railway.app/` |
 | **URL MCP** | `https://TU-URL.up.railway.app/mcp` |
+| **Manifiesto MPP** | `https://TU-URL.up.railway.app/.well-known/mpp.json` |
 | **Catálogo** | `https://TU-URL.up.railway.app/services.json` |
 | **Health** | `https://TU-URL.up.railway.app/healthz` |
 | **Red** | `eip155:42431` (Tempo Moderato) |
@@ -50,13 +51,23 @@ Copia esta plantilla con tu URL real:
 | **Cabecera** | `X-Payment: <txHash>:42431` |
 | **Precio** | 0,002 pathUSD por llamada |
 
+> El servicio expone un **manifiesto de descubrimiento MPP** (OpenAPI 3.1 con
+> `x-service-info` y `x-payment-info`) en `/.well-known/mpp.json`. Los registros
+> lo importan automáticamente, así que basta con dar la URL del sitio.
+
 ## Dónde registrar
 
-1. Consulta la documentación actual de [Tempo](https://docs.tempo.xyz) y su directorio de servicios de pago
-2. Busca el foro o formulario de registro de agentes/servicios x402
-3. En GitHub: [tempoxyz/tempo-apps discussions](https://github.com/tempoxyz/tempo-apps/discussions) (categoría explorer / payments)
+El directorio de pagos de Tempo es ahora el **MPP (Machine Payments Protocol)**.
+Hay tres canales, de menor a mayor esfuerzo:
 
-> El proceso puede ser manual. No hay API automatizada en este repositorio.
+1. **MPPScan** — [mppscan.com/register](https://www.mppscan.com/register).
+   Permisivo e inmediato, sin revisión. Pega la URL del servicio.
+2. **MPP Registry** — [mpp.directory/v1/services/submit](https://mpp.directory/v1/services/submit).
+   Self-serve oficial. En "Import well-known manifest" pega la URL del manifiesto
+   (`…/.well-known/mpp.json`); lo importa y encola la verificación.
+3. **Lista curada `mpp.dev/services`** — PR a
+   [tempoxyz/mpp](https://github.com/tempoxyz/mpp) editando `schemas/services.ts`.
+   Requiere revisión (servicios "live y production-ready").
 
 ## Checklist post-registro
 
