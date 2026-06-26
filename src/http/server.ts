@@ -90,9 +90,13 @@ app.get("/services.json", (c) =>
 );
 
 // MPP discovery manifest (OpenAPI 3.1) — auto-imported by agent payment registries.
-app.get("/.well-known/mpp.json", (c) =>
-  c.json(buildMppManifest(paymentConfig, new URL(c.req.url).origin)),
-);
+app.get("/.well-known/mpp.json", (c) => {
+  // Behind Railway's proxy, c.req.url is internal http. Honor forwarded headers.
+  const url = new URL(c.req.url);
+  const proto = c.req.header("x-forwarded-proto")?.split(",")[0]?.trim() || url.protocol.replace(":", "");
+  const host = c.req.header("x-forwarded-host")?.split(",")[0]?.trim() || c.req.header("host") || url.host;
+  return c.json(buildMppManifest(paymentConfig, `${proto}://${host}`));
+});
 
 // --- Payment gating (tempo-tip20) ---
 
