@@ -48,13 +48,28 @@ describe("buildMppManifest", () => {
       payTo: "0x1234567890123456789012345678901234567890",
     };
     const manifest = buildMppManifest(cfg, BASE) as Record<string, any>;
-    const offers = manifest.paths["/v1/validate-tax-id"].post["x-payment-info"].offers;
-    expect(offers).toHaveLength(1);
-    expect(offers[0].method).toBe("tempo");
-    expect(offers[0].intent).toBe("charge");
-    expect(offers[0].amount).toBe(cfg.priceAtomic);
-    expect(offers[0].currency).toBe(cfg.asset);
-    expect(offers[0].recipient).toBe(cfg.payTo);
+    const pay = manifest.paths["/v1/validate-tax-id"].post["x-payment-info"];
+    expect(pay.offers).toHaveLength(1);
+    expect(pay.offers[0].method).toBe("tempo");
+    expect(pay.offers[0].intent).toBe("charge");
+    expect(pay.offers[0].amount).toBe(cfg.priceAtomic);
+    expect(pay.offers[0].currency).toBe(cfg.asset);
+    expect(pay.offers[0].recipient).toBe(cfg.payTo);
+  });
+
+  it("declares MPPScan/X402Scan price and protocols on paid endpoints", () => {
+    const cfg = {
+      ...loadPaymentConfig(),
+      enabled: true,
+      payTo: "0x1234567890123456789012345678901234567890",
+    };
+    const manifest = buildMppManifest(cfg, BASE) as Record<string, any>;
+    const pay = manifest.paths["/v1/validate-tax-id"].post["x-payment-info"];
+    expect(pay.price.mode).toBe("fixed");
+    expect(pay.price.currency).toBe("USD");
+    expect(pay.price.amount).toBe("0.002000");
+    expect(pay.protocols[0].mpp.method).toBe("tempo");
+    expect(manifest.info.contact.url).toBe(BASE);
   });
 
   it("trims a trailing slash from the base URL", () => {

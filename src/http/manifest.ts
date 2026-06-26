@@ -61,18 +61,26 @@ function toolRequestSchema(toolName: string): Record<string, unknown> {
   }
 }
 
+/** Format atomic price (base units) as a fixed-decimal string, e.g. "0.002000". */
+function humanAmount(config: PaymentConfig): string {
+  return (Number(config.priceAtomic) / 10 ** config.assetDecimals).toFixed(config.assetDecimals);
+}
+
 /**
- * Build the MPP discovery manifest served at /.well-known/mpp.json.
+ * Build the discovery manifest served at /openapi.json and /.well-known/mpp.json.
  *
- * It is a standard OpenAPI 3.1 document with two MPP extensions:
- *  - `x-service-info` at the document root (categories, docs, MCP endpoint)
- *  - `x-payment-info.offers[]` on each paid operation (Tempo charge offer)
+ * It is a standard OpenAPI 3.1 document with discovery extensions consumed by
+ * two families of registries:
+ *  - MPPScan / X402Scan (AgentCash): `x-payment-info.price` + `.protocols`
+ *  - mpp.dev: `x-payment-info.offers[]`
+ * Both shapes coexist without conflict.
  *
- * See https://mpp.dev/advanced/discovery
+ * See https://agentcash.dev/discovery and https://mpp.dev/advanced/discovery
  */
 export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record<string, unknown> {
   const base = baseUrl.replace(/\/$/, "");
   const paths: Record<string, unknown> = {};
+  const amount = config.enabled ? humanAmount(config) : "0";
 
   for (const tool of TOOLS) {
     const route = `/v1/${tool.name.replace(/_/g, "-")}`;
@@ -80,6 +88,7 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
       operationId: tool.name,
       summary: tool.title,
       description: tool.description,
+      tags: ["validation"],
       requestBody: {
         required: true,
         content: { "application/json": { schema: toolRequestSchema(tool.name) } },
@@ -96,6 +105,12 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
 
     if (config.enabled && config.payTo) {
       post["x-payment-info"] = {
+        // MPPScan / X402Scan (AgentCash) canonical fields
+        price: { mode: "fixed", currency: "USD", amount },
+        protocols: [
+          { mpp: { method: "tempo", intent: "charge", currency: config.asset } },
+        ],
+        // mpp.dev offers[] (kept for cross-registry compatibility)
         offers: [
           {
             method: "tempo",
@@ -129,6 +144,7 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
         "Pay-per-call validation of tax IDs and bank accounts for Spain (DNI/NIE/CIF/IBAN), Colombia (NIT/cédula) and Argentina (CUIT/CUIL/DNI/CBU).",
       "x-guidance":
         "POST JSON to a /v1/* endpoint. Without X-Payment you receive HTTP 402 with Tempo pathUSD pricing. Transfer the amount, then retry with header X-Payment: <txHash>:42431.",
+      contact: { name: "Avala", url: base },
     },
     servers: [{ url: base }],
     "x-service-info": {
