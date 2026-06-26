@@ -69,6 +69,42 @@ Hay tres canales, de menor a mayor esfuerzo:
    [tempoxyz/mpp](https://github.com/tempoxyz/mpp) editando `schemas/services.ts`.
    Requiere revisión (servicios "live y production-ready").
 
+   > ⚠️ La lista curada usa `TEMPO_PAYMENT` (USDC.e de **mainnet**). Avala corre
+   > hoy en **testnet** (pathUSD). Envía este PR **solo tras migrar a mainnet**;
+   > si no, es probable que lo rechacen por no ser production-ready.
+
+   Entrada lista para pegar en el array `services` de `schemas/services.ts`
+   (tras migrar a mainnet):
+
+   ```ts
+   // ── Avala ──────────────────────────────────────────────────────────────
+   {
+     id: "avala",
+     name: "Avala",
+     url: "https://avala-production.up.railway.app",
+     serviceUrl: "https://avala-production.up.railway.app",
+     description:
+       "Pay-per-call validation of tax IDs and bank accounts for Spain (DNI/NIE/CIF/IBAN), Colombia (NIT/cédula) and Argentina (CUIT/CUIL/DNI/CBU). No signup, no API key.",
+     categories: ["data"],
+     integration: "first-party",
+     tags: ["validation", "kyc", "tax-id", "iban", "bank-account", "spain", "colombia", "argentina"],
+     status: "active",
+     docs: {
+       homepage: "https://avala-production.up.railway.app",
+       apiReference: "https://avala-production.up.railway.app/services.json",
+     },
+     provider: { name: "Avala", url: "https://avala-production.up.railway.app" },
+     realm: "avala-production.up.railway.app",
+     intent: "charge",
+     payments: [TEMPO_PAYMENT],
+     endpoints: [
+       { route: "POST /v1/validate-tax-id", desc: "Validate a national tax or personal identifier (ES/CO/AR)", amount: "2000" },
+       { route: "POST /v1/validate-bank-account", desc: "Validate a bank account identifier and checksum (ES IBAN, AR CBU)", amount: "2000" },
+       { route: "POST /v1/validate-iban", desc: "Validate any IBAN (ISO 13616 mod-97)", amount: "2000" },
+     ],
+   },
+   ```
+
 ## Checklist post-registro
 
 - [ ] URL pública responde `200` en `/healthz`
