@@ -2,6 +2,21 @@ import { MCP_HTTP_PATH } from "../mcp/http.js";
 import { TOOLS } from "../tools/definitions.js";
 import type { PaymentConfig } from "./payments.js";
 
+const VALIDATION_RESULT_SCHEMA = {
+  type: "object",
+  required: ["valid"],
+  properties: {
+    valid: { type: "boolean", description: "Whether the identifier passed validation" },
+    normalized: { type: "string", description: "Canonical form when valid" },
+    reason: {
+      type: "string",
+      enum: ["invalid_format", "invalid_checksum", "unsupported"],
+      description: "Machine-readable failure reason when valid is false",
+    },
+    details: { type: "object", additionalProperties: true, description: "Extra metadata (type, prefix, etc.)" },
+  },
+};
+
 /**
  * JSON Schema (subset) describing the request body for each validation tool.
  * Hand-authored to avoid a zod→JSON-Schema dependency; kept in sync with
@@ -70,7 +85,10 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
         content: { "application/json": { schema: toolRequestSchema(tool.name) } },
       },
       responses: {
-        "200": { description: "Validation result" },
+        "200": {
+          description: "Validation result",
+          content: { "application/json": { schema: VALIDATION_RESULT_SCHEMA } },
+        },
         "402": { description: "Payment Required" },
         "422": { description: "Invalid input" },
       },
@@ -84,6 +102,7 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
             intent: "charge",
             amount: config.priceAtomic,
             currency: config.asset,
+            description: `${tool.description} (${config.priceDisplay} per call)`,
             network: config.network,
             recipient: config.payTo,
           },
@@ -108,10 +127,12 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
       version: "0.1.0",
       description:
         "Pay-per-call validation of tax IDs and bank accounts for Spain (DNI/NIE/CIF/IBAN), Colombia (NIT/cédula) and Argentina (CUIT/CUIL/DNI/CBU).",
+      "x-guidance":
+        "POST JSON to a /v1/* endpoint. Without X-Payment you receive HTTP 402 with Tempo pathUSD pricing. Transfer the amount, then retry with header X-Payment: <txHash>:42431.",
     },
     servers: [{ url: base }],
     "x-service-info": {
-      categories: ["data", "compliance"],
+      categories: ["data"],
       tags: ["validation", "kyc", "tax-id", "iban", "bank-account", "spain", "colombia", "argentina"],
       docs: {
         homepage: base,

@@ -10,7 +10,8 @@ describe("buildMppManifest", () => {
     expect(manifest.openapi).toBe("3.1.0");
     expect(manifest.info.title).toBe("Avala");
     expect(manifest.servers[0].url).toBe(BASE);
-    expect(manifest["x-service-info"].categories).toContain("compliance");
+    expect(manifest["x-service-info"].categories).toContain("data");
+    expect(manifest["x-service-info"].categories).not.toContain("compliance");
     expect(manifest["x-service-info"].mcp.url).toBe(`${BASE}/mcp`);
   });
 
@@ -24,6 +25,20 @@ describe("buildMppManifest", () => {
   it("omits payment offers in free mode", () => {
     const manifest = buildMppManifest(loadPaymentConfig(), BASE) as Record<string, any>;
     expect(manifest.paths["/v1/validate-tax-id"].post["x-payment-info"]).toBeUndefined();
+  });
+
+  it("includes input and output schemas on paid endpoints", () => {
+    const cfg = {
+      ...loadPaymentConfig(),
+      enabled: true,
+      payTo: "0x1234567890123456789012345678901234567890",
+    };
+    const manifest = buildMppManifest(cfg, BASE) as Record<string, any>;
+    const op = manifest.paths["/v1/validate-tax-id"].post;
+    expect(op.requestBody.content["application/json"].schema).toBeDefined();
+    expect(op.responses["200"].content["application/json"].schema).toBeDefined();
+    expect(op.responses["402"]).toBeDefined();
+    expect(op["x-payment-info"].offers[0].description).toContain("per call");
   });
 
   it("includes a Tempo charge offer when payments are enabled", () => {

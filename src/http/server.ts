@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { z } from "zod";
 import { loadDotEnv } from "../load-env.js";
@@ -32,6 +32,20 @@ app.use(
     exposeHeaders: ["X-Payment-Response", "X-PAYMENT-RESPONSE", "mcp-session-id", "mcp-protocol-version"],
   }),
 );
+
+function publicRequestOrigin(reqUrl: string, header: (name: string) => string | undefined): string {
+  const url = new URL(reqUrl);
+  const proto = header("x-forwarded-proto")?.split(",")[0]?.trim() || url.protocol.replace(":", "");
+  const host = header("x-forwarded-host")?.split(",")[0]?.trim() || header("host") || url.host;
+  return `${proto}://${host}`;
+}
+
+function serveDiscoveryManifest(c: Context) {
+  const origin = publicRequestOrigin(c.req.url, (name) => c.req.header(name));
+  return c.json(buildMppManifest(paymentConfig, origin), 200, {
+    "Cache-Control": "public, max-age=300",
+  });
+}
 
 function apiRootJson() {
   return {
@@ -89,14 +103,9 @@ app.get("/services.json", (c) =>
   }),
 );
 
-// MPP discovery manifest (OpenAPI 3.1) — auto-imported by agent payment registries.
-app.get("/.well-known/mpp.json", (c) => {
-  // Behind Railway's proxy, c.req.url is internal http. Honor forwarded headers.
-  const url = new URL(c.req.url);
-  const proto = c.req.header("x-forwarded-proto")?.split(",")[0]?.trim() || url.protocol.replace(":", "");
-  const host = c.req.header("x-forwarded-host")?.split(",")[0]?.trim() || c.req.header("host") || url.host;
-  return c.json(buildMppManifest(paymentConfig, `${proto}://${host}`));
-});
+// MPP discovery manifest (OpenAPI 3.1) — required by MPPScan at /openapi.json.
+app.get("/openapi.json", serveDiscoveryManifest);
+app.get("/.well-known/mpp.json", serveDiscoveryManifest);
 
 // --- Payment gating (tempo-tip20) ---
 
@@ -149,6 +158,7 @@ if (HAS_WEB) {
       pathname.startsWith("/v1") ||
       pathname.startsWith("/mcp") ||
       pathname.startsWith("/.well-known/") ||
+      pathname === "/openapi.json" ||
       pathname === "/healthz" ||
       pathname === "/payments/status" ||
       pathname === "/services.json"
