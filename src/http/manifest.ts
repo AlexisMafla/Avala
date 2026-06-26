@@ -128,13 +128,6 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
     paths[route] = { post };
   }
 
-  paths["/services.json"] = {
-    get: { summary: "Service catalog", responses: { "200": { description: "Catalog" } } },
-  };
-  paths["/healthz"] = {
-    get: { summary: "Health check", responses: { "200": { description: "OK" } } },
-  };
-
   return {
     openapi: "3.1.0",
     info: {

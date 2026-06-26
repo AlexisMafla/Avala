@@ -22,6 +22,13 @@ describe("buildMppManifest", () => {
     expect(manifest.paths["/v1/validate-iban"].post).toBeDefined();
   });
 
+  it("only lists the paid POST routes (no auxiliary GET routes)", () => {
+    const manifest = buildMppManifest(loadPaymentConfig(), BASE) as Record<string, any>;
+    expect(Object.keys(manifest.paths)).toHaveLength(3);
+    expect(manifest.paths["/services.json"]).toBeUndefined();
+    expect(manifest.paths["/healthz"]).toBeUndefined();
+  });
+
   it("omits payment offers in free mode", () => {
     const manifest = buildMppManifest(loadPaymentConfig(), BASE) as Record<string, any>;
     expect(manifest.paths["/v1/validate-tax-id"].post["x-payment-info"]).toBeUndefined();
