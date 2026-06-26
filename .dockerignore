@@ -6,6 +6,7 @@ web/dist
 .env
 .env.local
 *.log
+.data
 coverage
 .DS_Store
 validate.json

@@ -11,6 +11,7 @@ import { MCP_HTTP_PATH, registerMcpHttpRoute } from "../mcp/http.js";
 import { TOOLS, getTool } from "../tools/definitions.js";
 import { loadPaymentConfig, buildPaymentDiscovery, buildPaymentStatus, registerRestPaymentGating } from "./payments.js";
 import { buildMppManifest } from "./manifest.js";
+import { paymentStore } from "./store.js";
 
 loadDotEnv();
 
@@ -20,6 +21,7 @@ const WEB_DIST = join(process.cwd(), "web/dist");
 const HAS_WEB = IS_PROD && existsSync(WEB_DIST);
 
 const paymentConfig = loadPaymentConfig();
+paymentStore.init();
 
 const app = new Hono();
 
@@ -83,6 +85,8 @@ app.get("/", (c) => {
 app.get("/healthz", (c) => c.json({ ok: true, payments: paymentConfig.enabled ? "paid" : "free" }));
 
 app.get("/payments/status", (c) => c.json(buildPaymentStatus(paymentConfig)));
+
+app.get("/stats", (c) => c.json(paymentStore.getStats(paymentConfig.enabled)));
 
 app.get("/services.json", (c) =>
   c.json({
@@ -161,6 +165,7 @@ if (HAS_WEB) {
       pathname === "/openapi.json" ||
       pathname === "/healthz" ||
       pathname === "/payments/status" ||
+      pathname === "/stats" ||
       pathname === "/services.json"
     ) {
       return next();

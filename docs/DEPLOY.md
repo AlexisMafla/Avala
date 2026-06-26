@@ -46,9 +46,29 @@ En Railway → tu servicio → **Variables**:
 | `TEMPO_RPC_URL` | `https://rpc.moderato.tempo.xyz` | Sí |
 | `PRICE_ATOMIC` | `2000` | No (default 0.002 pathUSD) |
 | `X402_NETWORK` | `eip155:42431` | No |
+| `DATA_DIR` | `/data` | Recomendado (persistencia, ver Paso 3b) |
 | `PORT` | *(Railway lo inyecta)* | Auto |
 
 > **No** subas `.env` al repositorio. Configura las variables solo en Railway.
+
+## Paso 3b · Volumen para persistencia (anti-replay + métricas)
+
+Avala guarda en disco los hashes de transacción ya usados (protección
+anti-replay) y los eventos de pago (métricas en `/stats`). Sin almacenamiento
+persistente, esos datos se borran en cada redeploy.
+
+> En **testnet** es opcional (el dinero no tiene valor). En **mainnet es
+> imprescindible**: sin él, un pago podría reutilizarse tras un redeploy.
+
+Para activarlo en Railway:
+
+1. Tu servicio → **Settings** → **Volumes** → **New Volume**
+2. **Mount path:** `/data`
+3. Añade la variable de entorno `DATA_DIR=/data`
+4. Redeploy
+
+Sin `DATA_DIR`, Avala usa `./.data` (efímero en Railway) y registra en los logs
+`payment store: in-memory only` o un directorio no persistente.
 
 ## Paso 4 · Desplegar
 

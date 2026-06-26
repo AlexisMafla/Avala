@@ -2,13 +2,14 @@ import { paywall } from "@tempo-agentgate/middleware";
 import type { Address } from "viem";
 import type { Hono, MiddlewareHandler } from "hono";
 import { TOOLS } from "../tools/definitions.js";
+import { paymentStore } from "./store.js";
 
 const DEFAULT_NETWORK = "eip155:42431";
 const DEFAULT_ASSET = "0x20c0000000000000000000000000000000000000";
 const DEFAULT_RPC = "https://rpc.moderato.tempo.xyz";
 
-/** Shared replay-protection set across REST and MCP paywalls. */
-const usedTxHashes = new Set<string>();
+/** Durable replay-protection set shared across REST and MCP paywalls. */
+const usedTxHashes = paymentStore.usedTxSet;
 
 export interface PaymentConfig {
   payTo?: string;
@@ -190,6 +191,15 @@ function buildPaywallOptions(config: PaymentConfig, pricing: Record<string, { am
     pricing,
     usedTxHashes,
     rpcUrl: config.rpcUrl,
+    onPayment: (info: { from: string; amount: bigint; txHash: string; endpoint: string }) => {
+      paymentStore.recordPayment({
+        ts: Date.now(),
+        endpoint: info.endpoint,
+        from: info.from,
+        amount: (Number(info.amount) / 10 ** config.assetDecimals).toString(),
+        txHash: info.txHash,
+      });
+    },
   };
 }
 

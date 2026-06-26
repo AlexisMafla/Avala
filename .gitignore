@@ -6,6 +6,7 @@ web/dist/
 .env.local
 .DS_Store
 coverage/
+.data/
 validate.json
 fund.json
 rpc.json
