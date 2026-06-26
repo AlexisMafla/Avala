@@ -137,7 +137,7 @@ export function buildMppManifest(config: PaymentConfig, baseUrl: string): Record
         "Pay-per-call validation of tax IDs and bank accounts for Spain (DNI/NIE/CIF/IBAN), Colombia (NIT/cédula) and Argentina (CUIT/CUIL/DNI/CBU).",
       "x-guidance":
         "POST JSON to a /v1/* endpoint. Without X-Payment you receive HTTP 402 with Tempo pathUSD pricing. Transfer the amount, then retry with header X-Payment: <txHash>:42431.",
-      contact: { name: "Avala", url: base },
+      contact: { name: "Avala", url: base, email: "xn9project@gmail.com" },
     },
     servers: [{ url: base }],
     "x-service-info": {

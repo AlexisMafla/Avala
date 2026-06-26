@@ -77,6 +77,7 @@ describe("buildMppManifest", () => {
     expect(pay.price.amount).toBe("0.002000");
     expect(pay.protocols[0].mpp.method).toBe("tempo");
     expect(manifest.info.contact.url).toBe(BASE);
+    expect(manifest.info.contact.email).toBe("xn9project@gmail.com");
   });
 
   it("trims a trailing slash from the base URL", () => {

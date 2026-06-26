@@ -50,13 +50,15 @@ Encender los ingresos por uso.
 - ✅ `.env` con `PAY_TO` + HTTP 402 verificado en testnet
 - ✅ Prueba de pago real end-to-end (transferir pathUSD + cabecera `X-Payment`)
 - 🟡 Página pública de precios y términos de uso
-- ⬜ Publicar Avala en el directorio de pagos de Tempo (tras despliegue)
+- 🟡 Publicar Avala en el directorio de pagos (✅ MPPScan testnet · ⬜ lista curada mpp.dev tras mainnet)
 
 ## Fase 3 · Lanzamiento público — 🟡 En curso
 
 Sacar el producto al mundo.
 
-- 🟡 Despliegue en Railway (monolito API + web)
+- ✅ Despliegue en Railway (monolito API + web)
+- ✅ Manifiesto de descubrimiento MPP (`/openapi.json` + `/.well-known/mpp.json`)
+- ✅ Registrado en MPPScan (descubrible por agentes en testnet)
 - ⬜ Dominio propio (opcional; URL de Railway por ahora)
 - ✅ Landing de marketing (pantalla Inicio)
 - 🟡 Documentación pública para desarrolladores (`docs/DEPLOY.md`)
@@ -71,12 +73,15 @@ Escalar por replicación.
 - ⬜ Métricas reales de uso e ingresos por endpoint
 - ⬜ Panel de Uso con datos reales (sustituir demo)
 - ⬜ Optimización de costes y caché
+- ⬜ **Rediseño de identidad de marca**: nuevo logo y favicon (sustituir el rayo
+  actual), paleta y aplicación en web (`BrandMark`) y `favicon.svg`
 
 ---
 
 ## Próximo paso inmediato
 
-🟡 **Desplegar en Railway**: `npm run build:all`, configurar vars de entorno y seguir `docs/DEPLOY.md`.
+🟡 **Migración a mainnet** + envío del PR a la lista curada `mpp.dev/services`.
+Avala ya está desplegado en Railway y registrado en MPPScan (testnet).
 
 ## Hitos clave (visión simple)
 
