@@ -26,7 +26,11 @@ El mismo núcleo de validación se expone de dos formas:
 | `validate_bank_account`| `POST /v1/validate-bank-account` | ES: IBAN · AR: CBU                       |
 | `validate_iban`        | `POST /v1/validate-iban`      | Cualquier IBAN (ISO 13616 mod-97)           |
 
-Endpoints gratuitos de descubrimiento: `GET /` , `GET /healthz`, `GET /services.json`.
+Endpoints gratuitos de descubrimiento: `GET /` , `GET /healthz`, `GET /services.json`,
+`GET /openapi.json` y `GET /.well-known/mpp.json` (manifiesto MPP para registros de agentes).
+
+Métricas del servicio: `GET /stats` (JSON con llamadas, ingresos y agentes) y
+`GET /dashboard` (panel visual en vivo para el dueño).
 
 Cada validación devuelve un objeto:
 

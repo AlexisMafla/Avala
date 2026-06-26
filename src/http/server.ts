@@ -12,6 +12,7 @@ import { TOOLS, getTool } from "../tools/definitions.js";
 import { loadPaymentConfig, buildPaymentDiscovery, buildPaymentStatus, registerRestPaymentGating } from "./payments.js";
 import { buildMppManifest } from "./manifest.js";
 import { paymentStore } from "./store.js";
+import { dashboardHtml } from "./dashboard.js";
 
 loadDotEnv();
 
@@ -87,6 +88,8 @@ app.get("/healthz", (c) => c.json({ ok: true, payments: paymentConfig.enabled ? 
 app.get("/payments/status", (c) => c.json(buildPaymentStatus(paymentConfig)));
 
 app.get("/stats", (c) => c.json(paymentStore.getStats(paymentConfig.enabled)));
+
+app.get("/dashboard", (c) => c.html(dashboardHtml()));
 
 app.get("/services.json", (c) =>
   c.json({
@@ -166,6 +169,7 @@ if (HAS_WEB) {
       pathname === "/healthz" ||
       pathname === "/payments/status" ||
       pathname === "/stats" ||
+      pathname === "/dashboard" ||
       pathname === "/services.json"
     ) {
       return next();
