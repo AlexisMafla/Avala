@@ -12,7 +12,7 @@ interface Feature {
 
 export interface Dict {
   nav: { home: string; api: string; mcp: string; usage: string; pricing: string };
-  common: { live: string; demoData: string; nextPhase: string; copy: string; copied: string };
+  common: { live: string; copy: string; copied: string };
   footer: { terms: string; privacy: string };
   home: {
     badge: string;
@@ -85,26 +85,24 @@ export interface Dict {
   usage: {
     title: string;
     subtitle: string;
-    demoNote: string;
-    throughput: string;
-    throughputSub: string;
-    revenue: string;
+    paidCallsSub: string;
     revenueSub: string;
-    activity: string;
+    agentsSub: string;
     activitySub: string;
+    spanUnits: { min: string; h: string; d: string };
+    endpoints: string;
+    emptyEndpoints: string;
     feed: string;
-    feedCols: { time: string; region: string; type: string };
-    viewLog: string;
-    clusters: string;
-    clusterCols: { load: string; latency: string };
-    stable: string;
+    feedCols: { time: string; endpoint: string; agent: string; amount: string; tx: string };
+    emptyFeed: string;
+    loadError: string;
+    freeModeNote: string;
     quickAction: string;
     quickActionBody: string;
     triggerTest: string;
     testing: string;
     testOk: string;
     testFail: string;
-    types: { bank: string; fiscal: string };
   };
   pricing: {
     title: string;
@@ -134,8 +132,6 @@ const es: Dict = {
   nav: { home: "Inicio", api: "API", mcp: "MCP", usage: "Uso", pricing: "Precios" },
   common: {
     live: "EN VIVO",
-    demoData: "Datos demo",
-    nextPhase: "Próxima fase de construcción",
     copy: "Copiar",
     copied: "Copiado",
   },
@@ -255,29 +251,26 @@ const es: Dict = {
     },
   },
   usage: {
-    title: "Red",
-    subtitle: "Observabilidad del protocolo en tiempo real.",
-    demoNote:
-      "Las métricas y el feed son datos de demostración. La prueba de nodo usa el endpoint real /healthz.",
-    throughput: "12.402",
-    throughputSub: "Llamadas totales (24 h)",
-    revenue: "12,40",
-    revenueSub: "Créditos Tempo (pendientes)",
-    activity: "Actividad de red",
-    activitySub: "Peticiones de validación por hora",
-    feed: "Feed de validaciones",
-    feedCols: { time: "Hora", region: "Región", type: "Tipo" },
-    viewLog: "Ver historial completo",
-    clusters: "Clusters activos",
-    clusterCols: { load: "Carga", latency: "Latencia" },
-    stable: "ESTABLE",
+    title: "Uso",
+    subtitle: "Métricas en vivo del servicio desde GET /stats.",
+    paidCallsSub: "Llamadas pagadas",
+    revenueSub: "Ingresos (pathUSD)",
+    agentsSub: "Agentes únicos",
+    activitySub: "Ventana de actividad",
+    spanUnits: { min: "min", h: "h", d: "d" },
+    endpoints: "Llamadas por endpoint",
+    emptyEndpoints: "Sin llamadas pagadas todavía.",
+    feed: "Pagos recientes",
+    feedCols: { time: "Cuándo", endpoint: "Endpoint", agent: "Agente", amount: "Importe", tx: "Tx" },
+    emptyFeed: "Aún no hay pagos registrados.",
+    loadError: "No se pudieron cargar las métricas. Comprueba que el backend esté en marcha.",
+    freeModeNote: "Modo libre activo: las métricas de ingresos aparecerán cuando PAY_TO esté configurado.",
     quickAction: "Acción rápida",
     quickActionBody: "Ejecuta una petición real al nodo para medir latencia.",
     triggerTest: "Probar nodo",
     testing: "Probando…",
     testOk: "Nodo operativo",
     testFail: "Nodo no disponible",
-    types: { bank: "BANCO", fiscal: "FISCAL" },
   },
   pricing: {
     title: "Precios",
@@ -368,8 +361,6 @@ const en: Dict = {
   nav: { home: "Home", api: "API", mcp: "MCP", usage: "Usage", pricing: "Pricing" },
   common: {
     live: "LIVE",
-    demoData: "Demo data",
-    nextPhase: "Next build phase",
     copy: "Copy",
     copied: "Copied",
   },
@@ -489,29 +480,26 @@ const en: Dict = {
     },
   },
   usage: {
-    title: "Network",
-    subtitle: "Real-time protocol observability.",
-    demoNote:
-      "Metrics and feed are demonstration data. The node test uses the real /healthz endpoint.",
-    throughput: "12,402",
-    throughputSub: "Total calls (24h)",
-    revenue: "12.40",
-    revenueSub: "Tempo credits (unsettled)",
-    activity: "Network activity",
-    activitySub: "Validation requests per hour",
-    feed: "Validation feed",
-    feedCols: { time: "Time", region: "Region", type: "Type" },
-    viewLog: "View entire log history",
-    clusters: "Active clusters",
-    clusterCols: { load: "Load", latency: "Latency" },
-    stable: "STABLE",
+    title: "Usage",
+    subtitle: "Live service metrics from GET /stats.",
+    paidCallsSub: "Paid calls",
+    revenueSub: "Revenue (pathUSD)",
+    agentsSub: "Unique agents",
+    activitySub: "Activity window",
+    spanUnits: { min: "min", h: "h", d: "d" },
+    endpoints: "Calls by endpoint",
+    emptyEndpoints: "No paid calls yet.",
+    feed: "Recent payments",
+    feedCols: { time: "When", endpoint: "Endpoint", agent: "Agent", amount: "Amount", tx: "Tx" },
+    emptyFeed: "No payments recorded yet.",
+    loadError: "Could not load metrics. Check that the backend is running.",
+    freeModeNote: "Free mode active: revenue metrics appear once PAY_TO is configured.",
     quickAction: "Quick action",
     quickActionBody: "Run a real request against the node to measure latency.",
     triggerTest: "Test node",
     testing: "Testing…",
     testOk: "Node operational",
     testFail: "Node unavailable",
-    types: { bank: "BANK", fiscal: "FISCAL" },
   },
   pricing: {
     title: "Pricing",

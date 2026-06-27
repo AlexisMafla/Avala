@@ -206,8 +206,8 @@ test/          # tests de los validadores (vitest)
 - [x] Interfaz web (playground React).
 - [x] Pagos tempo-tip20 verificados on-chain en Tempo Moderato.
 - [x] Despliegue monolito (Docker + Railway).
+- [x] Métricas de uso e ingresos (`GET /stats`, panel `/dashboard`, pestaña Uso en la web).
 - [ ] Más países (MX: CLABE/RFC/CURP; etc.).
-- [ ] Métricas de uso e ingresos por endpoint.
 
 ## Licencia
 

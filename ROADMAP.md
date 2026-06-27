@@ -4,7 +4,7 @@
 > monetizada con pagos TIP-20 sobre Tempo y expuesta como API HTTP y servidor MCP.
 
 Documento vivo. Se actualiza a medida que avanzamos.
-**Última actualización:** 2026-06-26 (Fase 3 en curso)
+**Última actualización:** 2026-06-27 (Fase 3 en curso)
 
 ## Leyenda de estado
 
@@ -24,7 +24,7 @@ El núcleo del producto funciona y está probado.
 - ✅ API HTTP (Hono) con endpoints `/v1/*`
 - ✅ Servidor MCP (stdio + HTTP remoto)
 - ✅ Paywall Tempo TIP-20 on-chain
-- ✅ Suite de pruebas automáticas (39 tests en verde)
+- ✅ Suite de pruebas automáticas (51 tests en verde)
 
 ## Fase 1 · Interfaz — 🟡 Casi completa
 
@@ -36,7 +36,7 @@ La app visual que ve el usuario y que sirve de escaparate (web/inversores).
 - ✅ Pantalla **Inicio** (propuesta de valor, features, red de nodos)
 - ✅ Pantalla **API** (validador real conectado al motor + visor JSON)
 - ✅ Pantalla **MCP** (herramientas expuestas + guía de integración)
-- ✅ Pantalla **Uso** (panel con métricas y feed; datos demo etiquetados)
+- ✅ Pantalla **Uso** (métricas reales desde `/stats`; feed de pagos recientes)
 - 🟡 Pulido responsive (móvil → escritorio) y accesibilidad
 
 ## Fase 2 · Monetización — ✅ Completada (testnet)
@@ -49,6 +49,8 @@ Encender los ingresos por uso.
 - ✅ Paywall Tempo TIP-20 on-chain (`tempo-tip20`, sin facilitator externo)
 - ✅ `.env` con `PAY_TO` + HTTP 402 verificado en testnet
 - ✅ Prueba de pago real end-to-end (transferir pathUSD + cabecera `X-Payment`)
+- ✅ Store persistente de pagos (replay protection + métricas en `/stats`)
+- ✅ Panel de métricas del dueño (`GET /dashboard`)
 - 🟡 Página pública de precios y términos de uso
 - 🟡 Publicar Avala en el directorio de pagos (✅ MPPScan testnet · ⬜ lista curada mpp.dev tras mainnet)
 
@@ -70,8 +72,8 @@ Sacar el producto al mundo.
 Escalar por replicación.
 
 - ⬜ Nuevos países (México: CLABE/RFC/CURP; Chile; etc.)
-- ⬜ Métricas reales de uso e ingresos por endpoint
-- ⬜ Panel de Uso con datos reales (sustituir demo)
+- ✅ Métricas reales de uso e ingresos por endpoint (`/stats`, `/dashboard`)
+- ✅ Panel de Uso con datos reales (pestaña web conectada a `/stats`)
 - ⬜ Optimización de costes y caché
 - ⬜ **Rediseño de identidad de marca**: nuevo logo y favicon (sustituir el rayo
   actual), paleta y aplicación en web (`BrandMark`) y `favicon.svg`

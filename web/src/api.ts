@@ -64,6 +64,32 @@ export async function fetchPaymentStatus(): Promise<PaymentStatus> {
   return res.json() as Promise<PaymentStatus>;
 }
 
+export interface PaymentEvent {
+  ts: number;
+  endpoint: string;
+  from?: string;
+  amount: string;
+  txHash: string;
+}
+
+export interface UsageStats {
+  enabled: boolean;
+  persistent: boolean;
+  totalCalls: number;
+  totalRevenue: string;
+  uniqueAgents: number;
+  byEndpoint: Record<string, number>;
+  firstAt: number | null;
+  lastAt: number | null;
+  recent: PaymentEvent[];
+}
+
+export async function fetchUsageStats(): Promise<UsageStats> {
+  const res = await fetch(`${API_BASE}/stats`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json() as Promise<UsageStats>;
+}
+
 export async function validate(
   tool: Tool,
   body: Record<string, unknown>,

@@ -14,7 +14,6 @@ const usedTxHashes = paymentStore.usedTxSet;
 export interface PaymentConfig {
   payTo?: string;
   network: string;
-  facilitatorUrl?: string;
   asset: string;
   assetDecimals: number;
   priceAtomic: string;
@@ -46,7 +45,6 @@ const EVM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 export function loadPaymentConfig(): PaymentConfig {
   const payTo = process.env.PAY_TO?.trim();
-  const facilitatorUrl = process.env.X402_FACILITATOR_URL?.trim();
   const network = process.env.X402_NETWORK?.trim() || DEFAULT_NETWORK;
   const asset = process.env.X402_ASSET?.trim() || DEFAULT_ASSET;
   const assetDecimals = Number(process.env.X402_ASSET_DECIMALS ?? 6);
@@ -56,7 +54,6 @@ export function loadPaymentConfig(): PaymentConfig {
   return {
     payTo,
     network,
-    facilitatorUrl,
     asset,
     assetDecimals,
     priceAtomic,
@@ -77,12 +74,6 @@ export function validatePaymentConfig(config: PaymentConfig): { warnings: string
 
   if (!config.payTo) missing.push("PAY_TO");
   else if (!EVM_ADDRESS.test(config.payTo)) warnings.push("PAY_TO does not look like a valid EVM address (0x…)");
-
-  if (config.facilitatorUrl) {
-    warnings.push(
-      "X402_FACILITATOR_URL is optional and unused — Avala verifies TIP-20 transfers on-chain via Tempo RPC.",
-    );
-  }
 
   const atomic = Number(config.priceAtomic);
   if (!Number.isFinite(atomic) || atomic <= 0) {
@@ -166,22 +157,6 @@ export async function checkRpcReachable(rpcUrl: string, timeoutMs = 8000): Promi
   } catch {
     return false;
   }
-}
-
-/** @deprecated Kept for scripts that still call it; delegates to RPC check. */
-export async function checkFacilitatorReachable(facilitatorUrl: string, timeoutMs = 8000): Promise<boolean> {
-  const base = facilitatorUrl.replace(/\/$/, "");
-  const candidates = [`${base}/supported`, `${base}/health`, base];
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
-      if (res.ok || res.status === 404) return true;
-    } catch {
-      /* try next */
-    }
-  }
-  return false;
 }
 
 function buildPaywallOptions(config: PaymentConfig, pricing: Record<string, { amount: string; description?: string }>) {

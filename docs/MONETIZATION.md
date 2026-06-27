@@ -91,7 +91,7 @@ X402_ASSET_DECIMALS=6
 PRICE_ATOMIC=2000
 ```
 
-> Solo `PAY_TO` es obligatorio para activar pagos. `X402_FACILITATOR_URL` ya no se usa.
+> Solo `PAY_TO` es obligatorio para activar pagos.
 
 ---
 

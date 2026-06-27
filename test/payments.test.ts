@@ -8,7 +8,6 @@ import {
 
 const ENV_KEYS = [
   "PAY_TO",
-  "X402_FACILITATOR_URL",
   "X402_NETWORK",
   "X402_ASSET",
   "X402_ASSET_DECIMALS",
@@ -41,7 +40,7 @@ describe("loadPaymentConfig", () => {
     expect(cfg.rpcUrl).toContain("moderato.tempo.xyz");
   });
 
-  it("enables when PAY_TO is set (no facilitator required)", () => {
+  it("enables when PAY_TO is set", () => {
     process.env.PAY_TO = "0x1234567890123456789012345678901234567890";
     const cfg = loadPaymentConfig();
     expect(cfg.enabled).toBe(true);
@@ -52,7 +51,6 @@ describe("validatePaymentConfig", () => {
   it("flags missing PAY_TO", () => {
     const { missing } = validatePaymentConfig(loadPaymentConfig());
     expect(missing).toContain("PAY_TO");
-    expect(missing).not.toContain("X402_FACILITATOR_URL");
   });
 
   it("warns on invalid PAY_TO format", () => {
